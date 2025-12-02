@@ -1,0 +1,1329 @@
+<head>
+  <meta charset="UTF-8" />
+  <title>RBS Energia - App Simulação</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ÍCONES PROFISSIONAIS (Material Symbols Rounded) -->
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+
+  <style>
+    :root {
+      --vermelho: #FF191D;
+      --fundo-gradiente-topo: #FFE5E4;
+      --branco: #FFFFFF;
+      --texto-escuro: #B31218;
+      --cinza: #777777;
+      --cinza-claro: #F5F5F5;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+    }
+    body {
+      background: var(--vermelho);
+      color: var(--branco);
+    }
+    .app {
+      max-width: 430px;
+      height: 100vh;
+      margin: 0 auto;
+      position: relative;
+      background: var(--vermelho);
+      overflow: hidden;
+    }
+    .tela {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .tela.ativa {
+      display: flex;
+    }
+
+    button { cursor: pointer; }
+    button:active, .clicavel:active { opacity: 0.7; }
+
+    /* ÍCONES MATERIAL */
+    .material-symbols-rounded {
+      font-variation-settings:
+        "FILL" 1,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+      font-size: 22px;
+      vertical-align: middle;
+    }
+
+    /* SPLASH */
+    .tela-splash {
+      background: var(--vermelho);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px;
+    }
+    .logo-splash {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .slogan {
+      font-size: 18px;
+      margin-bottom: 40px;
+    }
+    .loading {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .loading-circle {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-top-color: #FFFFFF;
+      margin-right: 8px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* LOGIN */
+    .tela-login {
+      background: var(--vermelho);
+      padding: 24px 16px 16px;
+      color: var(--branco);
+    }
+    .topo-login {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .topo-login h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .topo-login p {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .card-login {
+      background: var(--branco);
+      border-radius: 24px;
+      padding: 20px 16px 16px;
+      color: #333;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .abas-login {
+      display: flex;
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+    .aba {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .aba-ativa {
+      background: var(--vermelho);
+      color: var(--branco);
+    }
+    .aba-inativa {
+      background: #F4F4F4;
+      color: #999;
+      cursor: pointer;
+    }
+    .campo { margin-bottom: 14px; }
+    .campo label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #666;
+    }
+    .campo input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid #E0E0E0;
+      font-size: 14px;
+      outline: none;
+    }
+    .campo input:focus { border-color: var(--vermelho); }
+    .ver-senha {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 11px;
+      gap: 4px;
+      margin-top: -6px;
+      margin-bottom: 6px;
+      color: #777;
+    }
+    .ver-senha input { width: auto; }
+
+    .botao-principal {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to bottom, #FF4B4F, var(--vermelho));
+      color: var(--branco);
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 6px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .link-secundario {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--vermelho);
+    }
+    .rodape-login {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* TELAS INTERNAS */
+    .tela-interna {
+      background: linear-gradient(to bottom, var(--fundo-gradiente-topo), #FFFFFF);
+      padding-bottom: 80px;
+    }
+    header {
+      background: var(--vermelho);
+      color: var(--branco);
+      padding: 10px 14px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    }
+    .icon-btn {
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .area-conteudo {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px 70px;
+    }
+    .faixa-cliente {
+      background: rgba(255,255,255,0.7);
+      color: var(--texto-escuro);
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .alerta-inadimplencia {
+      background: var(--vermelho);
+      color: var(--branco);
+      font-size: 12px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .alerta-inadimplencia span.icon-alert { font-size: 16px; }
+
+    .card {
+      background: var(--branco);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      border: 1px solid #F1F1F1;
+      color: #333;
+      font-size: 13px;
+    }
+    .linha-topo-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--vermelho);
+      color: var(--branco);
+    }
+    .tag-inversa {
+      background: var(--branco);
+      color: var(--vermelho);
+      border: 1px solid var(--vermelho);
+    }
+    .valor-grande {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--texto-escuro);
+      margin: 4px 0;
+    }
+    .texto-menor {
+      font-size: 12px;
+      color: #666;
+    }
+    .linha-icone-texto {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+    .link-card {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--vermelho);
+      cursor: pointer;
+    }
+
+    /* MENU RÁPIDO */
+    .menu-rapido-titulo {
+      text-align: center;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--branco);
+      background: var(--vermelho);
+      padding: 6px 0;
+      border-radius: 999px;
+    }
+    .grid-atalhos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 70px;
+    }
+    .atalho {
+      text-align: center;
+      font-size: 11px;
+      color: var(--texto-escuro);
+      cursor: pointer;
+    }
+    .atalho-circulo {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 4px;
+      border-radius: 50%;
+      background: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--vermelho);
+      font-size: 20px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* BARRA INFERIOR */
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      background: var(--vermelho);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      color: var(--branco);
+    }
+    .bottom-item {
+      font-size: 22px;
+      opacity: 0.7;
+      cursor: pointer;
+    }
+    .bottom-item.ativo {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    /* FAIXAS / BOTÕES / GRÁFICOS */
+    .faixa-secao {
+      margin-top: 10px;
+      background: var(--vermelho);
+      color: var(--branco);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dados-unidade {
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #555;
+      background: rgba(255,255,255,0.8);
+    }
+    .botao-full {
+      width: 100%;
+      padding: 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .botao-vermelho {
+      background: linear-gradient(to bottom, #FF4B4F, var(--vermelho));
+      color: var(--branco);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .botao-branco {
+      background: var(--branco);
+      color: var(--vermelho);
+      border: 1px solid var(--vermelho);
+    }
+
+    .grafico-linha {
+      background: #FFFFFF;
+      border-radius: 12px;
+      height: 160px;
+      border: 1px solid #EEE;
+      position: relative;
+      overflow: hidden;
+      font-size: 11px;
+      color: #666;
+    }
+
+    /* Pontos do gráfico de consumo */
+    .ponto-consumo {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--vermelho);
+      box-shadow: 0 0 4px rgba(255,25,29,0.6);
+    }
+    .ponto-label {
+      position: absolute;
+      font-size: 10px;
+      color: #444;
+      transform: translateX(-50%);
+    }
+    .meses-eixo-x {
+      position: absolute;
+      bottom: 4px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #666;
+    }
+
+    .grafico-linha::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 18px;
+      top: 24px;
+      background:
+        linear-gradient(to top, rgba(255,25,29,0.15), rgba(255,25,29,0.02)),
+        repeating-linear-gradient(to right, #EEE 0 1px, transparent 1px 40px),
+        repeating-linear-gradient(to top, #EEE 0 1px, transparent 1px 28px);
+    }
+    .grafico-linha::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 26px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, #FF8A80, var(--vermelho));
+      box-shadow: 0 0 6px rgba(255,25,29,0.4);
+    }
+
+    .grafico-pizza {
+      background: #FFFFFF;
+      border-radius: 12px;
+      display: flex;
+      padding: 10px;
+      gap: 10px;
+      border: 1px solid #EEE;
+      font-size: 12px;
+    }
+    .pizza {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #1E88E5 0 30%,
+        #43A047 30% 55%,
+        #FB8C00 55% 75%,
+        #66BB6A 75% 85%,
+        #9E9E9E 85% 100%
+      );
+      margin: auto;
+      position: relative;
+    }
+    .pizza::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      background: #FFFFFF;
+    }
+    .legenda li { margin-bottom: 4px; }
+
+    /* MAPA FALTA DE ENERGIA – CIDADE */
+.mapa-falta {
+  background: #E3F2FD;
+  border-radius: 12px;
+  height: 180px;
+  border: 1px solid #BBDEFB;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #1565C0;
+  padding: 8px;
+}
+
+
+
+
+
+.mapa-quadro {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  height: 120px;
+  border-radius: 14px;
+  background: #BBDEFB;
+  overflow: hidden;
+}
+
+
+/* só algumas ruas finas */
+.mapa-rua {
+  position: absolute;
+  background: #FFFFFF;
+  opacity: 0.6;
+}
+.mapa-rua-horizontal {
+  height: 2px;
+  left: 0;
+  right: 0;
+}
+.mapa-rua-vertical {
+  width: 2px;
+  top: 0;
+  bottom: 0;
+}
+
+/* área afetada simples */
+.mapa-quadra-central {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  height: 40%;
+  border-radius: 6px;
+  background: rgba(255,205,210,0.9);
+}
+
+/* pino de localização */
+.mapa-pino {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #D32F2F;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 6px rgba(0,0,0,0.3);
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+}
+ 
+
+    /* Slider simulador parcelas em vermelho */
+    #slider-parcelas {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: #FFD1D2;
+      outline: none;
+    }
+    #slider-parcelas::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--vermelho);
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+    #slider-parcelas::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--vermelho);
+      box-shadow: 0 0 4px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TELA 1 - SPLASH -->
+  <div class="tela tela-splash ativa" id="tela-splash">
+    <div>
+      <div class="logo-splash">RBS Energia</div>
+      <div class="slogan">Sua energia, seu controle!</div>
+    </div>
+    <div class="loading">
+      <span class="loading-circle"></span>Iniciando...
+    </div>
+  </div>
+
+  <!-- TELA 2 - LOGIN -->
+  <div class="tela tela-login" id="tela-login">
+    <div class="topo-login">
+      <h1>RBS Energia</h1>
+      <p>Acesse sua conta e acompanhe em tempo real suas faturas e consumo de energia.</p>
+    </div>
+    <div class="card-login">
+      <div class="abas-login">
+        <div class="aba aba-ativa clicavel" onclick="alert('Área de login já selecionada.')">Login</div>
+        <div class="aba aba-inativa clicavel" onclick="alert('Cadastro disponível apenas em nossas agências ou site oficial.')">Cadastro</div>
+      </div>
+
+      <div class="campo">
+        <label>CPF / CNPJ</label>
+        <input id="campo-doc" type="text" placeholder="Somente números" />
+        <div class="texto-menor"
+             style="font-size:10px; margin-top:3px; color:#888; text-align:center;">
+          Digite 11 dígitos para CPF ou 14 dígitos para CNPJ.
+        </div>
+      </div>
+
+      <div class="campo">
+        <label>Senha</label>
+        <input id="campo-senha" type="password" placeholder="Senha" />
+      </div>
+
+      <div class="ver-senha">
+        <input id="toggle-senha" type="checkbox" onclick="toggleSenha()" />
+        <label for="toggle-senha">Ver senha</label>
+      </div>
+
+      <button class="botao-principal" onclick="tentarLogin()">ENTRAR</button>
+
+      <div class="link-secundario clicavel"
+           onclick="alert('Para recuperar sua senha, acesse o site da RBS Energia ou procure um de nossos canais de atendimento.')">
+        Esqueci minha senha
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- TELA 3 - HOME -->
+  <div class="tela tela-interna" id="tela-home">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+    <div class="faixa-cliente">Olá, Cliente RBS</div>
+    <div class="alerta-inadimplencia"
+         onclick="alert('Seu imóvel possui fatura vencida de R$ 201,73. Regularize para evitar cortes de energia.')">
+      <span class="icon-alert"><span class="material-symbols-rounded">warning</span></span>
+      <span>Seu imóvel está com inadimplência.<br>Regularize o pagamento e evite cortes.</span>
+    </div>
+    <div class="area-conteudo">
+      <!-- Card fatura vencida -->
+      <div class="card">
+        <div class="linha-topo-card">
+          <span class="tag">Em atraso</span>
+          <span class="tag tag-inversa">VENCIDA</span>
+        </div>
+        <div class="valor-grande">R$ 201,73</div>
+        <div class="texto-menor">Mês: outubro 2025</div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">event</span><span>Vencimento: 29/10/2025</span>
+        </div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">bolt</span><span>consumo: 190 kWh</span>
+        </div>
+        <div class="link-card"
+             onclick="alert('Detalhes da fatura vencida de outubro 2025: valor R$ 201,73, vencimento 29/10/2025, consumo 190 kWh.')">
+          ver detalhes &gt;
+        </div>
+      </div>
+
+      <!-- Card resumo rápido -->
+      <div class="card">
+        <div class="linha-topo-card">
+          <span><strong>Resumo rápido</strong></span>
+          <span class="tag">NOVEMBRO</span>
+        </div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">bar_chart</span><span>consumo atual: 245 kWh</span>
+        </div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">trending_up</span>
+          <span>comparativo ao mês passado: <strong>+24%</strong></span>
+        </div>
+      </div>
+
+      <!-- Menu rápido -->
+      <div class="menu-rapido-titulo">Menu Rápido</div>
+      <div class="grid-atalhos">
+        <div class="atalho" onclick="mostrarTela('tela-faturas')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">receipt_long</span></div>Faturas
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-negociacao')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">handshake</span></div>Negociação
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-faturas')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">description</span></div>2ª via
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-consumo')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">history</span></div>Histórico
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-consumo')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">bar_chart</span></div>Consumo
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-faturas')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">task_alt</span></div>Comprovantes
+        </div>
+        <div class="atalho" onclick="mostrarTela('tela-falta')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">bolt</span></div>Falta de Energia
+        </div>
+        <div class="atalho"
+             onclick="alert('Troca de titularidade pode ser solicitada pelo suporte ou canais oficiais da RBS Energia.')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">group</span></div>Troca de titularidade
+        </div>
+        <div class="atalho"
+             onclick="alert('Suporte/atendimento: chat online, 0800 e agências físicas. Nesta versão é apenas demonstração.')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">support_agent</span></div>Suporte
+        </div>
+        <div class="atalho"
+             onclick="alert('Outros serviços: nova ligação, religação, cadastro de débito automático e muito mais.')">
+          <div class="atalho-circulo"><span class="material-symbols-rounded">apps</span></div>Outros serviços
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 4 - FATURAS -->
+  <div class="tela tela-interna" id="tela-faturas">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+    <div class="faixa-cliente">Cliente RBS Energia</div>
+    <div class="dados-unidade">
+      UNIDADE CONSUMIDORA 001 • CÓDIGO: 000000-0 • TITULAR: CLIENTE RBS ENERGIA • CPF ***.***.***-** •
+      Rua Exemplo, 000 – Cidade/UF 00000-000
+    </div>
+    <div class="faixa-secao"><span class="material-symbols-rounded">receipt_long</span> SUAS FATURAS E PAGAMENTOS</div>
+    <div class="area-conteudo">
+      <div class="card">
+        <div class="linha-topo-card">
+          <span><strong>Em aberto</strong></span>
+          <span class="tag tag-inversa">ABERTA</span>
+        </div>
+        <div class="texto-menor">Novembro 2025 • <strong>R$ 279,77</strong></div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">event</span><span>Vencimento: 15/12/2025</span>
+        </div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">bolt</span><span>consumo: 245 kWh</span>
+        </div>
+        <button class="botao-full botao-vermelho"
+                onclick="alert('Como você quer pagar? Pix, cartão, boleto ou QR Code? Escolha a melhor opção para você.')">
+          PAGAR AGORA
+        </button>
+        <div class="link-card"
+             onclick="alert('Detalhes da fatura de novembro 2025: valor R$ 279,77, vencimento 15/12/2025, consumo 245 kWh.')">
+          ver detalhes &gt;
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="linha-topo-card">
+          <span><strong>Fatura vencida</strong></span>
+          <span class="tag tag-inversa">VENCIDA</span>
+        </div>
+        <div class="texto-menor">Outubro 2025 • <strong>R$ 201,73</strong></div>
+        <div class="texto-menor" style="margin-top:6px;color:#C62828;">
+          Fatura em atraso há 1 mês, sujeita a cortes a partir de 01/12/2025
+        </div>
+        <button class="botao-full botao-vermelho" onclick="mostrarTela('tela-negociacao')">
+          NEGOCIE AGORA
+        </button>
+      </div>
+
+      <button class="botao-full botao-branco"
+              onclick="alert('Aqui você tem acesso completo ao seu histórico de faturas pagas.')">
+        Histórico de faturas pagas
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('A 2ª via da sua fatura pode ser emitida em PDF ou enviada por e-mail.')">
+        Emitir 2ª via
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Emissão de comprovantes e declarações de quitação para fins de cadastro e comprovação de residência.')">
+        Emitir comprovantes e declarações
+      </button>
+      <button class="botao-full botao-branco" onclick="mostrarTela('tela-negociacao')">
+        Negociar débitos
+      </button>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-item" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 5 - CONSUMO -->
+  <div class="tela tela-interna" id="tela-consumo">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+    <div class="faixa-cliente">Cliente RBS Energia</div>
+    <div class="dados-unidade">
+      UNIDADE CONSUMIDORA 001 • CÓDIGO: 000000-0 • TITULAR: CLIENTE RBS ENERGIA • CPF ***.***.***-** •
+      Rua Exemplo, 000 – Cidade/UF 00000-000
+    </div>
+    <div class="faixa-secao"><span class="material-symbols-rounded">bar_chart</span> ENTENDA SEU CONSUMO</div>
+    <div class="area-conteudo">
+      <div class="card">
+        <div class="linha-topo-card">
+          <span class="clicavel" onclick="alert('Seleção de meses: você poderia escolher o período de referência do consumo (ex.: Ago a Nov).')">
+            Mês: Ago a nov. 2025 &gt;
+          </span>
+          <span class="clicavel" onclick="alert('Seleção de período: 4 meses, 6 meses, 12 meses, conforme a análise desejada.')">
+            Período: 4 meses &gt;
+          </span>
+        </div>
+        <div class="grafico-linha">
+          <!-- título eixo Y -->
+          <div style="position:absolute;left:14px;top:6px;">Consumo (kWh)</div>
+
+          <!-- Ago -->
+          <div class="ponto-consumo" style="left:15%; top:45%;"></div>
+          <div class="ponto-label" style="left:15%; top:37%;">211</div>
+
+          <!-- Set -->
+          <div class="ponto-consumo" style="left:40%; top:46%;"></div>
+          <div class="ponto-label" style="left:40%; top:38%;">210</div>
+
+          <!-- Out -->
+          <div class="ponto-consumo" style="left:65%; top:60%;"></div>
+          <div class="ponto-label" style="left:65%; top:52%;">190</div>
+
+          <!-- Nov -->
+          <div class="ponto-consumo" style="left:90%; top:30%;"></div>
+          <div class="ponto-label" style="left:90%; top:22%;">245</div>
+
+          <!-- meses eixo X -->
+          <div class="meses-eixo-x">
+            <span>Ago</span>
+            <span>Set</span>
+            <span>Out</span>
+            <span>Nov</span>
+          </div>
+        </div>
+
+        <div class="texto-menor"
+             style="font-size:10px;margin-top:4px;text-align:center;color:#777;">
+          Consumo de novembro está 24% acima do mês anterior.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="text-align:center;font-weight:700;color:var(--texto-escuro);margin-bottom:6px;">
+          ENTENDA OS VALORES DE SUA ENERGIA
+        </div>
+        <div class="linha-topo-card">
+          <span class="clicavel" onclick="alert('Selecione o mês desejado para ver o detalhamento da conta.')">
+            Mês: Novembro &gt;
+          </span>
+          <span class="clicavel" onclick="alert('Selecione o ano ou período desejado para análise de valores.')">
+            Período: 2025 &gt;
+          </span>
+        </div>
+        <div class="grafico-pizza">
+          <div class="pizza"></div>
+          <ul class="legenda">
+            <li style="color:#1E88E5;">Geração – R$ 83,93 (30%)</li>
+            <li style="color:#43A047;">Distribuição – R$ 69,94 (25%)</li>
+            <li style="color:#FB8C00;">Tributos – R$ 50,95 (20%)</li>
+            <li style="color:#66BB6A;">Encargos – R$ 27,98 (10%)</li>
+            <li style="color:#9E9E9E;">Outros – 41,97 (15%)</li>
+          </ul>
+        </div>
+        <div class="link-card" onclick="alert('Aqui você veria o detalhamento completo dos componentes da tarifa de energia.')">
+          ver mais detalhes &gt;
+        </div>
+      </div>
+
+      <div class="card" style="background:#FFFFFF;border-radius:999px;cursor:pointer;"
+           onclick="alert('Dicas de consumo econômico: troque lâmpadas por LED, desligue aparelhos em stand-by, ajuste o uso de ar-condicionado e priorize horário fora de pico.')">
+        <div class="linha-icone-texto" style="justify-content:center;color:var(--vermelho);">
+          <span class="material-symbols-rounded">lightbulb</span><span>Dicas para consumo econômico</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <div class="bottom-item" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 6 - NEGOCIAÇÃO -->
+  <div class="tela tela-interna" id="tela-negociacao">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+    <div class="faixa-cliente">Cliente RBS Energia</div>
+    <div class="dados-unidade">
+      UNIDADE CONSUMIDORA 001 • CÓDIGO: 000000-0 • TITULAR: CLIENTE RBS ENERGIA • CPF ***.***.***-** •
+      Rua Exemplo, 000 – Cidade/UF 00000-000
+    </div>
+    <div class="texto-menor" style="padding:6px 12px 0 12px; color:#555;">
+  Simule condições de parcelamento e escolha a melhor forma para regularizar seus débitos.
+    </div>
+    <div class="area-conteudo">
+      <div class="card">
+        <div class="texto-menor">Dívida Total:</div>
+        <div id="divida-total" class="valor-grande">R$ 201,73</div>
+        <div class="texto-menor">Faturas vencidas: (1) Nov. 2025</div>
+      </div>
+
+      <div class="card">
+        <div class="texto-menor" style="margin-bottom:8px;">
+          Incluir dívida atrasada com sua fatura atual?
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="botao-full botao-vermelho" style="margin-top:0;flex:1;"
+                  onclick="alert('Seu débito atrasado e sua fatura atual em um só débito. Ao escolher está opção, ambos valores apareceram na proxima data de vencimento.')">
+            SIM
+          </button>
+          <button class="botao-full botao-branco" style="margin-top:0;flex:1;"
+        onclick="alert('Ok, vamos manter a dívida separada da sua fatura atual. Mas é importante que você negocie sua fatura em atraso o quanto antes.')">
+            NÃO
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:6px;">Simulador de parcelas</div>
+        <input id="slider-parcelas" type="range" min="1" max="12" value="5"
+               oninput="atualizarSimulador()" />
+        <div id="texto-parcelas" class="texto-menor" style="margin-top:6px;">
+          5x de R$ 43,60
+        </div>
+        <div id="texto-total" class="texto-menor">
+          Total com juros: R$ 218,00
+        </div>
+        <div class="link-card"
+             onclick="alert('Os valores são simulados com juros simples de 1,5% ao mês sobre o total da dívida.')">
+          ver mais detalhes &gt;
+        </div>
+      </div>
+
+      <button class="botao-full botao-vermelho"
+              onclick="alert('Parabéns, você negociou seu débito em atraso. Os valores do seu parcelamento ou pagamento único apareceram no menu de faturas.')">
+        Confirmar Parcelamento
+      </button>
+      <button class="botao-full botao-branco"
+        onclick="alert('Se você quitou ou negociou seu débito em atraso, emita agora sua certidão de adimplência para comprovar a regularidade do seu cadastro.')">
+  Emitir comprovante de adimplência
+      </button>
+    </div>
+    <div class="bottom-bar">
+      <div class="bottom-item" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 7 - FALTA DE LUZ -->
+  <div class="tela tela-interna" id="tela-falta">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+
+    <div class="faixa-cliente">Cliente RBS Energia</div>
+
+    <div class="dados-unidade">
+      UNIDADE CONSUMIDORA 001 • CÓDIGO: 000000-0 • TITULAR: CLIENTE RBS ENERGIA • CPF ***.***.***-** •
+      Rua Exemplo, 000 – Cidade/UF 00000-000
+    </div>
+
+    <div class="faixa-secao"><span class="material-symbols-rounded">bolt</span> FALTA DE ENERGIA</div>
+
+    <div class="area-conteudo">
+      <!-- Status -->
+      <div class="card">
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">warning</span><span>Status atual: <strong>Sem energia devido a manutenções</strong></span>
+        </div>
+        <div class="linha-icone-texto">
+          <span class="material-symbols-rounded">schedule</span><span>Previsão de restabelecimento: 14:30</span>
+        </div>
+        <div class="texto-menor" style="margin-top:6px;">
+          Última atualização: há 5 minutos
+        </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="card">
+  <div class="texto-menor" style="margin-bottom:6px;font-weight:600;">
+    Mapa da região
+  </div>
+
+  <div class="mapa-quadro">
+    <!-- poucas ruas -->
+    <div class="mapa-rua mapa-rua-horizontal" style="top:25%;"></div>
+    <div class="mapa-rua mapa-rua-horizontal" style="top:55%;"></div>
+
+    <div class="mapa-rua mapa-rua-vertical" style="left:35%;"></div>
+    <div class="mapa-rua mapa-rua-vertical" style="left:70%;"></div>
+
+    <!-- área afetada -->
+    <div class="mapa-quadra-central"></div>
+
+    <!-- pino -->
+    <div class="mapa-pino"></div>
+  </div>
+</div>
+
+          
+<div class="texto-menor" style="font-size:10px; margin:6px 0 4px 0; text-align:center; color:#777;">
+  Área em vermelho indica região afetada; o pino marca seu bairro.
+</div>
+
+
+      <!-- Chamados -->
+      <div class="card clicavel"
+           onclick="alert('Chamado em aberto #001-2025: em análise pela equipe técnica. Previsão de atendimento ainda hoje.')">
+        <div style="font-weight:600;margin-bottom:6px;">Seus chamados</div>
+        <div class="texto-menor">
+          Chamado em aberto: <strong>#2025-001</strong> – Aguardando equipe
+        </div>
+      </div>
+
+      <!-- Botão informar falta -->
+      <button class="botao-full botao-vermelho"
+              onclick="alert('Olá Cliente, anote o seguinte protocolo de atendimento 000000000, uma equipe especializada será enviada ao seu bairro/endereço em até 1 hora. Pedimos que aguarde a chegada de nossa equipe. Se possuir qualquer outra dúvida entre em contato com nossos canais de atendimento 24/7.')">
+        Informar falta de energia
+      </button>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-item" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 8 - PERFIL -->
+  <div class="tela tela-interna" id="tela-perfil">
+    <header>
+      <span class="icon-btn" onclick="alert('Menu lateral em desenvolvimento para esta versão de demonstração.')">
+        <span class="material-symbols-rounded">menu</span>
+      </span>
+      <span>RBS Energia</span>
+      <span class="icon-btn" onclick="alert('Você não possui novas notificações no momento.')">
+        <span class="material-symbols-rounded">notifications</span>
+      </span>
+    </header>
+    <div class="faixa-cliente">Perfil do cliente</div>
+    <div class="texto-menor" style="padding:6px 12px 0 12px; color:#555;">
+  Gerencie seus dados, unidades consumidoras e preferências de atendimento.
+   </div>
+    <div class="area-conteudo">
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:4px;">Cliente RBS Energia</div>
+        <div class="texto-menor">CPF: ***.***.***-**</div>
+        <div class="texto-menor">E-mail: cliente@rbsenergia.com</div>
+        <div class="texto-menor">Telefone: (00) 00000-0000</div>
+        <div class="texto-menor" style="margin-top:6px;">
+          Endereço: Rua Exemplo, 000 – Cidade/UF
+        </div>
+      </div>
+
+      <button class="botao-full botao-branco"
+              onclick="alert('Aqui você poderia atualizar seus dados pessoais cadastrados na RBS Energia.')">
+        Meus dados pessoais
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Visualize e gerencie todas as suas unidades consumidoras vinculadas ao seu CPF.')">
+        Minhas unidades consumidoras
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Gerencie quais notificações deseja receber por push, SMS ou e-mail.')">
+        Notificações e alertas
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Defina formas de pagamento preferidas, como cartão salvo ou débito automático.')">
+        Preferências de pagamento
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Configure senha, autenticação em dois fatores e outras opções de segurança.')">
+        Segurança e privacidade
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Envie sugestões, dúvidas ou avaliações para melhorar o app RBS Energia.')">
+        Ajuda e feedback
+      </button>
+      <button class="botao-full botao-branco"
+              onclick="alert('Configurações da conta: idioma, tema, acessibilidade e mais preferências.')">
+        Configurações da conta
+      </button>
+
+      <button class="botao-full botao-vermelho" style="margin-top:18px;"
+              onclick="alert('Você saiu da sua conta. Para retornar, faça login novamente.'); mostrarTela('tela-login');">
+        Sair da conta
+      </button>
+
+      <div class="texto-menor" style="text-align:center;margin-top:16px;color:var(--texto-escuro);font-style:italic;">
+        Powered by RBS Energia v1.0
+      </div>
+      <div class="texto-menor" style="text-align:center;margin-top:4px;color:var(--texto-escuro);">
+        RBS Energia S.A. Todos os direitos reservados.
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="bottom-item" onclick="mostrarTela('tela-home')">
+        <span class="material-symbols-rounded">home</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-faturas')">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-consumo')">
+        <span class="material-symbols-rounded">bar_chart</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-negociacao')">
+        <span class="material-symbols-rounded">handshake</span>
+      </div>
+      <div class="bottom-item" onclick="mostrarTela('tela-falta')">
+        <span class="material-symbols-rounded">bolt</span>
+      </div>
+      <div class="bottom-item ativo" onclick="mostrarTela('tela-perfil')">
+        <span class="material-symbols-rounded">person</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function mostrarTela(id) {
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    document.getElementById(id).classList.add('ativa');
+
+    document.querySelectorAll('.bottom-bar').forEach(barra => {
+      const itens = barra.querySelectorAll('.bottom-item');
+      itens.forEach(i => i.classList.remove('ativo'));
+    });
+
+    const mapa = {
+      'tela-home': 0,
+      'tela-faturas': 1,
+      'tela-consumo': 2,
+      'tela-negociacao': 3,
+      'tela-falta': 4,
+      'tela-perfil': 5
+    };
+    const idx = mapa[id];
+    if (idx !== undefined) {
+      document.querySelectorAll('.bottom-bar').forEach(barra => {
+        const itens = barra.querySelectorAll('.bottom-item');
+        if (itens[idx]) itens[idx].classList.add('ativo');
+      });
+    }
+  }
+
+  // Splash -> Login
+  setTimeout(() => { mostrarTela('tela-login'); }, 2000);
+
+  
+  function tentarLogin() {
+  const doc = document.getElementById('campo-doc').value.trim();
+  const senha = document.getElementById('campo-senha').value.trim();
+  const apenasNumeros = doc.replace(/\D/g, '');
+
+  const validoCPF = (apenasNumeros.length === 11);
+  const validoCNPJ = (apenasNumeros.length === 14);
+
+  if ((!validoCPF && !validoCNPJ) || senha !== 'clienteRBS2025') {
+    alert('Documento ou senha inválidos.\nUse um CPF (11 dígitos) ou CNPJ (14 dígitos) e senha clienteRBS2025.');
+    return;
+  }
+  mostrarTela('tela-home');
+}
+
+
+  function toggleSenha() {
+    const campo = document.getElementById('campo-senha');
+    campo.type = campo.type === 'password' ? 'text' : 'password';
+  }
+
+  // simulador de parcelas com juros simples 1,5% ao mês
+  function atualizarSimulador() {
+    const slider = document.getElementById('slider-parcelas');
+    if (!slider) return;
+    const n = Number(slider.value);
+    const principal = 201.73;
+    const taxa = 0.025; // 1,5% ao mês
+    const total = principal * (1 + taxa * n);
+    const parcela = total / n;
+    document.getElementById('texto-parcelas').textContent =
+      n + 'x de R$ ' + parcela.toFixed(2).replace('.', ',');
+    document.getElementById('texto-total').textContent =
+      'Total com juros: R$ ' + total.toFixed(2).replace('.', ',');
+  }
+  atualizarSimulador();
+</script>
+</body>
+</html>
